@@ -4,7 +4,7 @@ class TestProcesses < Minitest::Test
 
   def test_get_ps
     with_app do |app_data|
-      response = heroku.get_ps(app_data['name'])
+      response = hilarity.get_ps(app_data['name'])
       ps = response.body.first
 
       assert_equal(200, response.status)
@@ -25,15 +25,15 @@ class TestProcesses < Minitest::Test
   end
 
   def test_get_ps_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.get_ps(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.get_ps(random_name)
     end
   end
 
   def test_post_ps
     with_app do |app_data|
       command = 'pwd'
-      response = heroku.post_ps(app_data['name'], command)
+      response = hilarity.post_ps(app_data['name'], command)
       ps = response.body
 
       assert_equal(200, response.status)
@@ -57,7 +57,7 @@ class TestProcesses < Minitest::Test
   def test_post_ps_with_attach
     with_app do |app_data|
       command = 'pwd'
-      response = heroku.post_ps(app_data['name'], command, 'attach' => true)
+      response = hilarity.post_ps(app_data['name'], command, 'attach' => true)
       ps = response.body
 
       assert_equal(200, response.status)
@@ -80,7 +80,7 @@ class TestProcesses < Minitest::Test
   def test_post_ps_with_size
     with_app do |app_data|
       command = 'bash'
-      response = heroku.post_ps(app_data['name'], command, 'size' => '2')
+      response = hilarity.post_ps(app_data['name'], command, 'size' => '2')
       ps = response.body
 
       assert_equal(200, response.status)
@@ -100,7 +100,7 @@ class TestProcesses < Minitest::Test
   def test_post_ps_with_size_numeric
     with_app do |app_data|
       command = 'bash'
-      response = heroku.post_ps(app_data['name'], command, 'size' => 4)
+      response = hilarity.post_ps(app_data['name'], command, 'size' => 4)
       ps = response.body
 
       assert_equal(200, response.status)
@@ -120,7 +120,7 @@ class TestProcesses < Minitest::Test
   def test_post_ps_with_size_string
     with_app do |app_data|
       command = 'bash'
-      response = heroku.post_ps(app_data['name'], command, 'size' => 'P')
+      response = hilarity.post_ps(app_data['name'], command, 'size' => 'P')
       ps = response.body
 
       assert_equal(200, response.status)
@@ -138,14 +138,14 @@ class TestProcesses < Minitest::Test
   end
 
   def test_post_ps_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_ps(random_name, 'pwd')
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_ps(random_name, 'pwd')
     end
   end
 
   def test_post_ps_restart
     with_app do |app_data|
-      response = heroku.post_ps_restart(app_data['name'])
+      response = hilarity.post_ps_restart(app_data['name'])
 
       assert_equal(200, response.status)
       assert_equal('ok', response.body)
@@ -154,7 +154,7 @@ class TestProcesses < Minitest::Test
 
   def test_post_ps_restart_with_ps
     with_app do |app_data|
-      response = heroku.post_ps_restart(app_data['name'], 'ps' => 'web.1')
+      response = hilarity.post_ps_restart(app_data['name'], 'ps' => 'web.1')
 
       assert_equal(200, response.status)
       assert_equal('ok', response.body)
@@ -163,7 +163,7 @@ class TestProcesses < Minitest::Test
 
   def test_post_ps_restart_with_type
     with_app do |app_data|
-      response = heroku.post_ps_restart(app_data['name'], 'type' => 'web')
+      response = hilarity.post_ps_restart(app_data['name'], 'type' => 'web')
 
       assert_equal(200, response.status)
       assert_equal('ok', response.body)
@@ -171,21 +171,21 @@ class TestProcesses < Minitest::Test
   end
 
   def test_post_ps_restart_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_ps_restart(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_ps_restart(random_name)
     end
   end
 
   def test_post_ps_scale_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_ps_scale(random_name, 'web', 2)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_ps_scale(random_name, 'web', 2)
     end
   end
 
   def test_post_ps_scale_down
     with_app('stack' => 'cedar') do |app_data|
-      heroku.post_ps_scale(app_data['name'], 'web', 2)
-      response = heroku.post_ps_scale(app_data['name'], 'web', 1)
+      hilarity.post_ps_scale(app_data['name'], 'web', 2)
+      response = hilarity.post_ps_scale(app_data['name'], 'web', 1)
 
       assert_equal(200, response.status)
       assert_equal(1, response.body)
@@ -193,16 +193,16 @@ class TestProcesses < Minitest::Test
   end
 
   def test_post_ps_scale_type_not_found
-    assert_raises(Heroku::API::Errors::RequestFailed) do
+    assert_raises(Hilarity::API::Errors::RequestFailed) do
       with_app('stack' => 'cedar') do |app_data|
-        heroku.post_ps_scale(app_data['name'], 'run', 2)
+        hilarity.post_ps_scale(app_data['name'], 'run', 2)
       end
     end
   end
 
   def test_post_ps_scale_up
     with_app('stack' => 'cedar') do |app_data|
-      response = heroku.post_ps_scale(app_data['name'], 'web', 2)
+      response = hilarity.post_ps_scale(app_data['name'], 'web', 2)
 
       assert_equal(200, response.status)
       assert_equal(2, response.body)
@@ -210,24 +210,24 @@ class TestProcesses < Minitest::Test
   end
 
   def test_post_ps_scale_without_cedar
-    assert_raises(Heroku::API::Errors::RequestFailed) do
+    assert_raises(Hilarity::API::Errors::RequestFailed) do
       with_app do |app_data|
-        heroku.post_ps_scale(app_data['name'], 'web', 2)
+        hilarity.post_ps_scale(app_data['name'], 'web', 2)
       end
     end
   end
 
   def test_post_ps_stop
-    assert_raises(Heroku::API::Errors::RequestFailed) do
+    assert_raises(Hilarity::API::Errors::RequestFailed) do
       with_app do |app_data|
-        heroku.post_ps_stop(app_data['name'], {})
+        hilarity.post_ps_stop(app_data['name'], {})
       end
     end
   end
 
   def test_post_ps_stop_with_ps
     with_app do |app_data|
-      response = heroku.post_ps_stop(app_data['name'], 'ps' => 'web.1')
+      response = hilarity.post_ps_stop(app_data['name'], 'ps' => 'web.1')
 
       assert_equal(200, response.status)
       assert_equal('ok', response.body)
@@ -236,7 +236,7 @@ class TestProcesses < Minitest::Test
 
   def test_post_ps_stop_with_type
     with_app do |app_data|
-      response = heroku.post_ps_stop(app_data['name'], 'type' => 'web')
+      response = hilarity.post_ps_stop(app_data['name'], 'type' => 'web')
 
       assert_equal(200, response.status)
       assert_equal('ok', response.body)
@@ -244,15 +244,15 @@ class TestProcesses < Minitest::Test
   end
 
   def test_post_ps_stop_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_ps_stop(random_name, {})
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_ps_stop(random_name, {})
     end
   end
 
   def test_put_dynos
     with_app do |app_data|
       dynos = 1
-      response = heroku.put_dynos(app_data['name'], dynos)
+      response = hilarity.put_dynos(app_data['name'], dynos)
 
       assert_equal(200, response.status)
       assert_equal({
@@ -263,15 +263,15 @@ class TestProcesses < Minitest::Test
   end
 
   def test_put_dynos_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.put_dynos(random_name, 1)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.put_dynos(random_name, 1)
     end
   end
 
   def test_put_dynos_with_cedar
-    assert_raises(Heroku::API::Errors::RequestFailed) do
+    assert_raises(Hilarity::API::Errors::RequestFailed) do
       with_app('stack' => 'cedar') do |app_data|
-        heroku.put_dynos(app_data['name'], 2)
+        hilarity.put_dynos(app_data['name'], 2)
       end
     end
   end
@@ -279,7 +279,7 @@ class TestProcesses < Minitest::Test
   def test_put_workers
     with_app do |app_data|
       workers = 1
-      response = heroku.put_workers(app_data['name'], workers)
+      response = hilarity.put_workers(app_data['name'], workers)
 
       assert_equal(200, response.status)
       assert_equal({
@@ -290,22 +290,22 @@ class TestProcesses < Minitest::Test
   end
 
   def test_put_workers_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.put_workers(random_name, 1)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.put_workers(random_name, 1)
     end
   end
 
   def test_put_workers_with_cedar
-    assert_raises(Heroku::API::Errors::RequestFailed) do
+    assert_raises(Hilarity::API::Errors::RequestFailed) do
       with_app('stack' => 'cedar') do |app_data|
-        heroku.put_workers(app_data['name'], 2)
+        hilarity.put_workers(app_data['name'], 2)
       end
     end
   end
 
   def test_put_formation
     with_app do |app_data|
-      response = heroku.put_formation(app_data['name'], {"web" => "2X"})
+      response = hilarity.put_formation(app_data['name'], {"web" => "2X"})
       ps = response.body.first
 
       assert_equal(200, response.status)
@@ -315,7 +315,7 @@ class TestProcesses < Minitest::Test
 
  def test_get_dyno_types
     with_app('stack' => 'cedar') do |app_data|
-      response = heroku.get_dyno_types(app_data['name'])
+      response = hilarity.get_dyno_types(app_data['name'])
       assert_equal(200, response.status)
       assert_equal(['command' => 'bundle exec rails console',
                     'name' => 'console',

@@ -4,7 +4,7 @@ class TestAttachments < Minitest::Test
 
   def test_get_attachments
     with_app do |app_data|
-      response = heroku.get_attachments(app_data['name'])
+      response = hilarity.get_attachments(app_data['name'])
 
       assert_equal(200, response.status)
       assert_equal(
@@ -15,8 +15,8 @@ class TestAttachments < Minitest::Test
   end
 
   def test_get_attachments_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.get_attachments(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.get_attachments(random_name)
     end
   end
 

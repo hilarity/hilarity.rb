@@ -13,27 +13,27 @@ task :cache, [:api_key] do |task, args|
   unless args.api_key
     puts('cache requires an api key, please call as `cache[api_key]`')
   else
-    require "#{File.dirname(__FILE__)}/lib/heroku/api"
-    heroku = Heroku::API.new(:api_key => args.api_key)
+    require "#{File.dirname(__FILE__)}/lib/hilarity/api"
+    hilarity = Hilarity::API.new(:api_key => args.api_key)
 
-    addons = MultiJson.dump(heroku.get_addons.body)
-    File.open("#{File.dirname(__FILE__)}/lib/heroku/api/mock/cache/get_addons.json", 'w') do |file|
+    addons = MultiJson.dump(hilarity.get_addons.body)
+    File.open("#{File.dirname(__FILE__)}/lib/hilarity/api/mock/cache/get_addons.json", 'w') do |file|
       file.write(addons)
     end
 
-    app_name = "heroku-api-#{Time.now.to_i}"
-    app = heroku.post_app('name' => app_name)
-    features = MultiJson.dump(heroku.get_features(app_name).body)
-    File.open("#{File.dirname(__FILE__)}/lib/heroku/api/mock/cache/get_features.json", 'w') do |file|
+    app_name = "hilarity-api-#{Time.now.to_i}"
+    app = hilarity.post_app('name' => app_name)
+    features = MultiJson.dump(hilarity.get_features(app_name).body)
+    File.open("#{File.dirname(__FILE__)}/lib/hilarity/api/mock/cache/get_features.json", 'w') do |file|
       file.write(features)
     end
-    heroku.delete_app(app_name)
+    hilarity.delete_app(app_name)
 
-    user = heroku.get_user.body
+    user = hilarity.get_user.body
     user["email"] = "user@example.com"
-    user["id"] = "123456@users.heroku.com"
+    user["id"] = "123456@users.hilarity.com"
     user = MultiJson.dump(user)
-    File.open("#{File.dirname(__FILE__)}/lib/heroku/api/mock/cache/get_user.json", 'w') do |file|
+    File.open("#{File.dirname(__FILE__)}/lib/hilarity/api/mock/cache/get_user.json", 'w') do |file|
       file.write(user)
     end
 

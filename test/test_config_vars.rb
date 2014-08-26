@@ -4,9 +4,9 @@ class TestConfigVars < Minitest::Test
 
   def test_delete_app_config_var
     with_app('stack' => 'cedar') do |app_data|
-      heroku.put_config_vars(app_data['name'], {'KEY' => 'value'})
+      hilarity.put_config_vars(app_data['name'], {'KEY' => 'value'})
 
-      response = heroku.delete_config_var(app_data['name'], 'KEY')
+      response = hilarity.delete_config_var(app_data['name'], 'KEY')
 
       assert_equal(200, response.status)
       assert_equal({}, response.body)
@@ -14,14 +14,14 @@ class TestConfigVars < Minitest::Test
   end
 
   def test_delete_app_config_var_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.delete_config_var(random_name, 'key')
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.delete_config_var(random_name, 'key')
     end
   end
 
   def test_get_app_config_vars
     with_app('stack' => 'cedar') do |app_data|
-      response = heroku.get_config_vars(app_data['name'])
+      response = hilarity.get_config_vars(app_data['name'])
 
       assert_equal(200, response.status)
       assert_equal({}, response.body)
@@ -29,25 +29,25 @@ class TestConfigVars < Minitest::Test
   end
 
   def test_get_app_config_vars_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.get_config_vars(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.get_config_vars(random_name)
     end
   end
 
   def test_put_app_config_vars
     with_app('stack' => 'cedar') do |app_data|
-      response = heroku.put_config_vars(app_data['name'], {'KEY' => 'value'})
+      response = hilarity.put_config_vars(app_data['name'], {'KEY' => 'value'})
 
       assert_equal(200, response.status)
       assert_equal({'KEY' => 'value'}, response.body)
 
-      heroku.delete_config_var(app_data['name'], 'KEY')
+      hilarity.delete_config_var(app_data['name'], 'KEY')
     end
   end
 
   def test_put_app_config_vars_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.put_config_vars(random_name, {'KEY' => 'value'})
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.put_config_vars(random_name, {'KEY' => 'value'})
     end
   end
 

@@ -4,10 +4,10 @@ class TestCollaborators < Minitest::Test
 
   def test_delete_collaborator
     with_app do |app_data|
-      email_address = 'wesley@heroku.com'
-      heroku.post_collaborator(app_data['name'], email_address)
+      email_address = 'wesley@hilarity.com'
+      hilarity.post_collaborator(app_data['name'], email_address)
 
-      response = heroku.delete_collaborator(app_data['name'], email_address)
+      response = hilarity.delete_collaborator(app_data['name'], email_address)
 
       assert_equal(200, response.status)
       assert_equal(
@@ -18,22 +18,22 @@ class TestCollaborators < Minitest::Test
   end
 
   def test_delete_collaborator_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.delete_collaborator(random_name, random_email_address)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.delete_collaborator(random_name, random_email_address)
     end
   end
 
   def test_delete_collaborator_user_not_found
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::NotFound) do
-        heroku.delete_collaborator(app_data['name'], random_email_address)
+      assert_raises(Hilarity::API::Errors::NotFound) do
+        hilarity.delete_collaborator(app_data['name'], random_email_address)
       end
     end
   end
 
   def test_get_collaborators
     with_app do |app_data|
-      response = heroku.get_collaborators(app_data['name'])
+      response = hilarity.get_collaborators(app_data['name'])
 
       assert_equal(200, response.status)
       assert_equal(
@@ -44,15 +44,15 @@ class TestCollaborators < Minitest::Test
   end
 
   def test_get_collaborators_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.get_collaborators(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.get_collaborators(random_name)
     end
   end
 
   def test_post_collaborator
     with_app do |app_data|
-      email_address = 'wesley@heroku.com'
-      response = heroku.post_collaborator(app_data['name'], email_address)
+      email_address = 'wesley@hilarity.com'
+      response = hilarity.post_collaborator(app_data['name'], email_address)
 
       assert_equal(201, response.status)
       assert_equal(
@@ -60,22 +60,22 @@ class TestCollaborators < Minitest::Test
         response.body
       )
 
-      heroku.delete_collaborator(app_data['name'], email_address)
+      hilarity.delete_collaborator(app_data['name'], email_address)
     end
   end
 
   def test_post_collaborator_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_collaborator(random_name, random_email_address)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_collaborator(random_name, random_email_address)
     end
   end
 
   def test_delete_collaborator
     with_app do |app_data|
-      email_address = 'wesley+test@heroku.com'
-      heroku.post_collaborator(app_data['name'], email_address)
+      email_address = 'wesley+test@hilarity.com'
+      hilarity.post_collaborator(app_data['name'], email_address)
 
-      response = heroku.delete_collaborator(app_data['name'], email_address)
+      response = hilarity.delete_collaborator(app_data['name'], email_address)
 
       assert_equal(200, response.status)
       assert_equal(

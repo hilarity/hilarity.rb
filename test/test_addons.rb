@@ -4,30 +4,30 @@ class TestAddons < Minitest::Test
 
   def test_delete_addon_addon_not_found
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.delete_addon(app_data['name'], random_name)
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.delete_addon(app_data['name'], random_name)
       end
     end
   end
 
   def test_delete_addon_addon_not_installed
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.delete_addon(app_data['name'], 'custom_domains:basic')
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.delete_addon(app_data['name'], 'custom_domains:basic')
       end
     end
   end
 
   def test_delete_addon_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.delete_addon(random_name, 'logging:basic')
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.delete_addon(random_name, 'logging:basic')
     end
   end
 
   def test_delete_addon
     with_app do |app_data|
-      heroku.post_addon(app_data['name'], 'deployhooks:http')
-      response = heroku.delete_addon(app_data['name'], 'deployhooks:http')
+      hilarity.post_addon(app_data['name'], 'deployhooks:http')
+      response = hilarity.delete_addon(app_data['name'], 'deployhooks:http')
 
       assert_equal(200, response.status)
       assert_equal({
@@ -39,8 +39,8 @@ class TestAddons < Minitest::Test
   end
 
   def test_get_addons
-    response = heroku.get_addons
-    data = File.read("#{File.dirname(__FILE__)}/../lib/heroku/api/mock/cache/get_addons.json")
+    response = hilarity.get_addons
+    data = File.read("#{File.dirname(__FILE__)}/../lib/hilarity/api/mock/cache/get_addons.json")
 
     assert_equal(200, response.status)
     assert_equal(MultiJson.load(data), response.body)
@@ -48,7 +48,7 @@ class TestAddons < Minitest::Test
 
   def test_get_addons_with_app
     with_app do |app_data|
-      response = heroku.get_addons(app_data['name'])
+      response = hilarity.get_addons(app_data['name'])
 
       assert_equal(200, response.status)
       assert_equal([{
@@ -70,14 +70,14 @@ class TestAddons < Minitest::Test
   end
 
   def test_get_addons_with_app_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.get_addons(random_name)
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.get_addons(random_name)
     end
   end
 
   def test_post_addon
     with_app do |app_data|
-      response = heroku.post_addon(app_data['name'], 'deployhooks:http')
+      response = hilarity.post_addon(app_data['name'], 'deployhooks:http')
 
       assert_equal(200, response.status)
       assert_equal({
@@ -90,7 +90,7 @@ class TestAddons < Minitest::Test
 
   def test_post_addon_with_config
     with_app do |app_data|
-      response = heroku.post_addon(app_data['name'], 'deployhooks:http', {"url"=>"http://example.com"})
+      response = hilarity.post_addon(app_data['name'], 'deployhooks:http', {"url"=>"http://example.com"})
 
       assert_equal(200, response.status)
       assert_equal({
@@ -107,7 +107,7 @@ class TestAddons < Minitest::Test
       Excon.stub({:method => :post, :path => addon_post_path}) do |params|
         {:body => params[:query], :status => 200}
       end
-      response = heroku.post_addon(app_data['name'], 'deployhooks:http', {"url"=>"http://example.com"})
+      response = hilarity.post_addon(app_data['name'], 'deployhooks:http', {"url"=>"http://example.com"})
       assert_equal({ "config[url]" => "http://example.com"}, response.body)
     end
     Excon.stubs.shift
@@ -115,40 +115,40 @@ class TestAddons < Minitest::Test
 
   def test_post_addon_addon_already_installed
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.post_addon(app_data['name'], 'logging:basic')
-        heroku.post_addon(app_data['name'], 'logging:basic')
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.post_addon(app_data['name'], 'logging:basic')
+        hilarity.post_addon(app_data['name'], 'logging:basic')
       end
     end
   end
 
   def test_post_addon_addon_type_already_installed
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.post_addon(app_data['name'], 'logging:basic')
-        heroku.post_addon(app_data['name'], 'logging:expanded')
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.post_addon(app_data['name'], 'logging:basic')
+        hilarity.post_addon(app_data['name'], 'logging:expanded')
       end
     end
   end
 
   def test_post_addon_addon_not_found
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::NotFound) do
-        heroku.post_addon(app_data['name'], random_name)
+      assert_raises(Hilarity::API::Errors::NotFound) do
+        hilarity.post_addon(app_data['name'], random_name)
       end
     end
   end
 
   def test_post_addon_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.post_addon(random_name, 'shared-database:5mb')
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.post_addon(random_name, 'shared-database:5mb')
     end
   end
 
   def test_put_addon
     with_app do |app_data|
-      response = heroku.post_addon(app_data['name'], 'pgbackups:basic')
-      response = heroku.put_addon(app_data['name'], 'pgbackups:plus')
+      response = hilarity.post_addon(app_data['name'], 'pgbackups:basic')
+      response = hilarity.put_addon(app_data['name'], 'pgbackups:plus')
 
       assert_equal(200, response.status)
       assert_equal({
@@ -161,32 +161,32 @@ class TestAddons < Minitest::Test
 
   def test_put_addon_addon_already_installed
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.post_addon(app_data['name'], 'logging:basic')
-        heroku.put_addon(app_data['name'], 'logging:basic')
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.post_addon(app_data['name'], 'logging:basic')
+        hilarity.put_addon(app_data['name'], 'logging:basic')
       end
     end
   end
 
   def test_put_addon_addon_not_found
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::NotFound) do
-        heroku.put_addon(app_data['name'], random_name)
+      assert_raises(Hilarity::API::Errors::NotFound) do
+        hilarity.put_addon(app_data['name'], random_name)
       end
     end
   end
 
   def test_put_addon_addon_type_not_installed
     with_app do |app_data|
-      assert_raises(Heroku::API::Errors::RequestFailed) do
-        heroku.put_addon(app_data['name'], 'releases:basic')
+      assert_raises(Hilarity::API::Errors::RequestFailed) do
+        hilarity.put_addon(app_data['name'], 'releases:basic')
       end
     end
   end
 
   def test_put_addon_app_not_found
-    assert_raises(Heroku::API::Errors::NotFound) do
-      heroku.put_addon(random_name, 'logging:basic')
+    assert_raises(Hilarity::API::Errors::NotFound) do
+      hilarity.put_addon(random_name, 'logging:basic')
     end
   end
 
