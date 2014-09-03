@@ -1,5 +1,5 @@
 module Hilarity
-  class API
-    VERSION = "0.3.19"
-  end
+	class API
+		VERSION = "0.0.1"
+	end
 end

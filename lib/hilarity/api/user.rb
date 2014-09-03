@@ -1,14 +1,14 @@
 module Hilarity
-  class API
+	class API
 
-    # GET /user
-    def get_user
-      request(
-        :expects  => 200,
-        :method   => :get,
-        :path     => "/user"
-      )
-    end
+		# GET /user/me
+		def get_user
+			request(
+				:expects	=> 200,
+				:method	 => :get,
+				:path		 => "/api/v1/users/me"
+			)
+		end
 
-  end
+	end
 end
